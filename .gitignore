@@ -1,0 +1,44 @@
+# Binaries
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test files
+*.test
+*.out
+coverage.html
+
+# Config with secrets
+configs/config.yaml
+configs/credentials.json
+configs/token.json
+
+# Databases
+*.db
+*.db-shm
+*.db-wal
+qdrant_storage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Go workspace
+go.work
+go.work.sum
+
+# User data directory
+.go-local-rag-email/

@@ -1,0 +1,8 @@
+# Ignore actual config with secrets
+config.yaml
+credentials.json
+token.json
+
+# Keep example files
+!config.yaml.example
+!.gitignore

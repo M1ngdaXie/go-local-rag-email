@@ -1,0 +1,28 @@
+app:
+  name: "go-local-rag-email"
+  data_dir: "~/.go-local-rag-email"
+
+gmail:
+  credentials_path: "configs/credentials.json"
+  token_path: "~/.go-local-rag-email/token.json"
+  scopes:
+    - "https://www.googleapis.com/auth/gmail.readonly"
+
+openai:
+  api_key: "${OPENAI_API_KEY}"  # Set via environment variable
+  embedding_model: "text-embedding-3-small"
+  chat_model: "gpt-4o-mini"
+  max_tokens: 2000
+  temperature: 0.7
+
+sqlite:
+  path: "~/.go-local-rag-email/emails.db"
+  enable_wal: true
+
+qdrant:
+  url: "http://localhost:6333"
+  collection_name: "email_embeddings"
+  vector_size: 1536  # text-embedding-3-small dimension
+
+logging:
+  level: "info"  # debug, info, warn, error
