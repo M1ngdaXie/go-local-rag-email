@@ -17,9 +17,8 @@ func main() {
 	}
 	defer application.Shutdown()
 
-	// TODO: Execute CLI commands
-	// Hint: if err := cli.Execute(application); err != nil {
-	//           fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-	//           os.Exit(1)
-	//       }
+	if err := cli.Execute(application); err != nil {
+	          fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+	          os.Exit(1)
+	      }
 }

@@ -34,7 +34,5 @@ func init() {
 	// Global flags
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.go-local-rag-email/config.yaml)")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-
-	// TODO: Add test commands here
-	// Hint: rootCmd.AddCommand(testEmailCmd)
+	rootCmd.AddCommand(testEmailCmd)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/M1ngdaXie/go-local-rag-email/internal/config"
+	"github.com/M1ngdaXie/go-local-rag-email/internal/database"
 	"github.com/M1ngdaXie/go-local-rag-email/pkg/logger"
 	"gorm.io/gorm"
 )
@@ -12,9 +13,7 @@ import (
 type App struct {
 	config *config.Config
 	logger logger.Logger
-
-	// TODO: Add database field
-	// Hint: sqliteDB *gorm.DB
+	sqliteDB *gorm.DB
 
 	// Services will be added here later (lazy-loaded)
 	// emailService  email.Service
@@ -34,19 +33,17 @@ func New() (*App, error) {
 	log := logger.NewSlog(cfg.Logging.Level)
 	log.Info("Application initializing", "name", cfg.App.Name)
 
-	// TODO: Initialize SQLite database
-	// Hint: Import "github.com/M1ngdaXie/go-local-rag-email/internal/database"
-	//       db, err := database.NewSQLite(cfg.SQLite, log)
-	//       if err != nil {
-	//           return nil, fmt.Errorf("failed to initialize SQLite: %w", err)
-	//       }
+
+	      db, err := database.NewSQLite(cfg.SQLite, log)
+	      if err != nil {
+	          return nil, fmt.Errorf("failed to initialize SQLite: %w", err)
+	      }
 
 	// Create app container
 	app := &App{
 		config: cfg,
 		logger: log,
-		// TODO: Add database to app
-		// sqliteDB: db,
+		sqliteDB: db,
 	}
 
 	log.Info("Application initialized successfully")
@@ -63,21 +60,19 @@ func (a *App) Logger() logger.Logger {
 	return a.logger
 }
 
-// TODO: Add getter for SQLite database
-// func (a *App) SQLiteDB() *gorm.DB {
-//     return a.sqliteDB
-// }
+func (a *App) SQLiteDB() *gorm.DB {
+    return a.sqliteDB
+}
 
 // Shutdown performs cleanup when the application exits
 func (a *App) Shutdown() {
 	a.logger.Info("Application shutting down")
 
-	// TODO: Close database connection
-	// Hint: if a.sqliteDB != nil {
-	//           if sqlDB, err := a.sqliteDB.DB(); err == nil {
-	//               sqlDB.Close()
-	//           }
-	//       }
+	if a.sqliteDB != nil {
+	          if sqlDB, err := a.sqliteDB.DB(); err == nil {
+	              sqlDB.Close()
+	          }
+	      }
 
 	a.logger.Info("Shutdown complete")
 }

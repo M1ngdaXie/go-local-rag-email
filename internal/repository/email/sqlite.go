@@ -35,52 +35,60 @@ func (r *sqliteRepo) Create(ctx context.Context, email *domain.Email) error {
 
 // Get retrieves an email by ID
 func (r *sqliteRepo) Get(ctx context.Context, id string) (*domain.Email, error) {
-	// TODO: Query the database for an email with the given ID
-	// Hint: var email domain.Email
-	//       err := r.db.WithContext(ctx).Where("id = ?", id).First(&email).Error
-	// Check for gorm.ErrRecordNotFound to return a friendly error
-
-	return nil, fmt.Errorf("TODO: Implement Get")
+	var email domain.Email
+	err := r.db.WithContext(ctx).Where("id = ?", id).First(&email).Error
+	if err != nil {                                                                                                                                                                                                    
+      if err == gorm.ErrRecordNotFound {                                                                                                                                                                             
+          return nil, fmt.Errorf("email not found: %s", id)                                                                                                                                                          
+      }                                                                                                                                                                                                              
+      return nil, fmt.Errorf("failed to get email: %w", err)                                                                                                                                                         
+  } 
+	r.logger.Debug("finding the email", "id", email.ID)
+	return &email, nil
 }
 
 // List retrieves emails with filters and pagination
 func (r *sqliteRepo) List(ctx context.Context, filter Filter, page Pagination) ([]*domain.Email, error) {
-	// TODO: Build a query with filters
-	// Hint: var emails []*domain.Email
-	//       query := r.db.WithContext(ctx)
-	//
-	// Apply filters (if not empty):
-	// if filter.From != "" {
-	//     query = query.Where("from LIKE ?", "%"+filter.From+"%")
-	// }
-	// if filter.DateFrom != nil {
-	//     query = query.Where("date >= ?", filter.DateFrom)
-	// }
-	//
-	// Apply pagination:
-	// if page.Limit > 0 {
-	//     query = query.Limit(page.Limit)
-	// }
-	// if page.Offset > 0 {
-	//     query = query.Offset(page.Offset)
-	// }
-	//
+	var emails []*domain.Email
+	query := r.buildFilter(ctx, filter)
+	if page.Limit > 0 {                                                                                                                                                                                            
+          query = query.Limit(page.Limit)                                                                                                                                                                            
+      }                                                                                                                                                                                                              
+      if page.Offset > 0 {                                                                                                                                                                                           
+          query = query.Offset(page.Offset)                                                                                                                                                                          
+      }   
 	// Order by date descending:
-	// query = query.Order("date DESC")
-	//
+	query = query.Order("date DESC")
+	
 	// Execute query:
-	// err := query.Find(&emails).Error
-
-	return nil, fmt.Errorf("TODO: Implement List")
+	err := query.Find(&emails).Error
+	if err != nil {
+        return nil, err
+    }
+	return emails, nil
 }
+func (r *sqliteRepo) buildFilter(ctx context.Context, filter Filter) *gorm.DB {
+    query := r.db.WithContext(ctx).Model(&domain.Email{})
 
+    if filter.From != "" {
+        // 记得要跟 domain tag 里的 column 名字一致
+        query = query.Where("from_address LIKE ?", "%"+filter.From+"%")
+    }
+    if filter.DateFrom != nil {
+        query = query.Where("date >= ?", *filter.DateFrom)
+    }
+    
+    return query
+}
 // Count returns the total number of emails matching the filter
 func (r *sqliteRepo) Count(ctx context.Context, filter Filter) (int64, error) {
 	// TODO: Count emails matching the filter
-	// Hint: var count int64
-	//       query := r.db.WithContext(ctx).Model(&domain.Email{})
-	//       Apply the same filters as List()
-	//       err := query.Count(&count).Error
-
-	return 0, fmt.Errorf("TODO: Implement Count")
+	var count int64
+	      query := r.buildFilter(ctx, filter)
+	    //   Apply the same filters as List()
+	      err := query.Count(&count).Error
+		  if err != nil{
+			return count, err
+		  }
+	return count, nil
 }

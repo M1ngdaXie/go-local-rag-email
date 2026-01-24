@@ -24,12 +24,13 @@ type Repository interface {
 
 // Filter holds criteria for filtering emails
 type Filter struct {
-	// TODO: Add filter fields
-	// Hint: From string, Labels []string, DateFrom *time.Time, DateTo *time.Time
+	From string
+	DateFrom *time.Time
+	DateTo *time.Time
 }
 
 // Pagination holds offset and limit for paging
 type Pagination struct {
-	// TODO: Add pagination fields
-	// Hint: Offset int, Limit int
+	Limit int
+	Offset int
 }

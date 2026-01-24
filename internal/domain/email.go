@@ -31,8 +31,7 @@ type Email struct {
 
 // TableName specifies the table name for GORM
 func (Email) TableName() string {
-	// TODO: Return the table name (e.g., "emails")
-	return ""
+	return "emails"
 }
 
 // GetToList parses the To field (stored as JSON string) into a slice
