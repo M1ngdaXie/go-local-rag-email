@@ -42,3 +42,7 @@ go.work.sum
 
 # User data directory
 .go-local-rag-email/
+
+#documents
+DEVELOPMENT_GUIDE.md
+CLAUDE.md
