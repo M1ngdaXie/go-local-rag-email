@@ -53,7 +53,7 @@ func NewSQLite(cfg config.SQLiteConfig, log logger.Logger) (*gorm.DB, error) {
 	// TODO: Step 7 - Auto-migrate all domain models
 	err = db.AutoMigrate(
 		&domain.Email{},
-		// &domain.Chunk{}, // TODO: Uncomment when Chunk model is created
+		&domain.Chunk{}, 
 	)
 	if err != nil {
 		return nil, fmt.Errorf("auto-migration failed: %w", err)

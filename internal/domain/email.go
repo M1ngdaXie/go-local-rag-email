@@ -53,38 +53,62 @@ func (e *Email) SetToList(recipients []string) error{
 
 // Chunk represents a text chunk from an email (for RAG)
 type Chunk struct {
-	// TODO: Add fields
-	// ID, EmailID, Content, Position, TokenCount, Metadata
-	// Use appropriate GORM tags
+	ID        uint      `gorm:"primaryKey;autoIncrement"`
+	EmailID   string    `gorm:"index;column:email_id"` // 外键逻辑关联
+	
+	Content   string    `gorm:"type:text;column:content"` // 真正被 embed 的文本
+	
+	Position  int       `gorm:"column:position"` // 在 email 中的顺序（第几个 chunk）
+	TokenCnt  int       `gorm:"column:token_count"`
+	
+	Source    string    `gorm:"column:source"` 
+	// body / subject / snippet
+	
+	CreatedAt time.Time
 }
 
 // TableName for Chunk
 func (Chunk) TableName() string {
-	// TODO: Return "chunks"
-	return ""
+	return "chunks"
 }
 
 // Embedding tracks which embeddings exist (actual vectors stored in Qdrant)
 type Embedding struct {
-	// TODO: Add fields
-	// ID, EmailID, ChunkID, VectorID (ID in Qdrant), Metadata
+	ID        uint      `gorm:"primaryKey;autoIncrement"`
+	
+	ChunkID  uint      `gorm:"uniqueIndex;column:chunk_id"`
+	EmailID  string    `gorm:"index;column:email_id"`
+
+	VectorID string    `gorm:"uniqueIndex;column:vector_id"` 
+	// Qdrant point ID
+	
+	Model    string    `gorm:"column:model"` 
+	// text-embedding-3-small
+	
+	Dim      int       `gorm:"column:dimension"`
+	
+	CreatedAt time.Time
 }
+
 
 // TableName for Embedding
 func (Embedding) TableName() string {
-	// TODO: Return "embeddings"
-	return ""
+	return "embeddings"
 }
 
 // SyncMetadata tracks the last sync time with Gmail
 type SyncMetadata struct {
-	// TODO: Add fields
-	// ID, LastSyncTime, EmailsCount
-	// Hint: Use `gorm:"primaryKey;autoIncrement"` for ID
+	ID            uint      `gorm:"primaryKey;autoIncrement"`
+	
+	LastSyncTime  time.Time `gorm:"column:last_sync_time"`
+	EmailsCount   int       `gorm:"column:emails_count"`
+	
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 }
+
 
 // TableName for SyncMetadata
 func (SyncMetadata) TableName() string {
-	// TODO: Return "sync_metadata"
-	return ""
+	return "sync_metadata"
 }
