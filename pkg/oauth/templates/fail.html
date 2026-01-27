@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorization Failed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(180deg, #4A4458 0%, #352F44 50%, #2A2438 100%);
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+        }
+
+        .dialog-box {
+            background: #F5E6C8;
+            border: 8px solid #8B4513;
+            box-shadow:
+                inset 4px 4px 0 #FFF8DC,
+                inset -4px -4px 0 #D2B48C,
+                12px 12px 0 rgba(0,0,0,0.3);
+            padding: 40px 50px;
+            max-width: 500px;
+            text-align: center;
+            animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+            20%, 40%, 60%, 80% { transform: translateX(8px); }
+        }
+
+        .skull-container {
+            margin-bottom: 20px;
+        }
+
+        .skull {
+            display: inline-block;
+            width: 64px;
+            height: 64px;
+            position: relative;
+            animation: wobble 2s ease-in-out infinite;
+        }
+
+        .skull-head {
+            width: 56px;
+            height: 48px;
+            background: #E8E8E8;
+            border: 4px solid #333;
+            border-radius: 50% 50% 45% 45%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .skull-eye {
+            width: 14px;
+            height: 16px;
+            background: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 18px;
+            animation: blink 3s ease-in-out infinite;
+        }
+
+        .skull-eye.left { left: 8px; }
+        .skull-eye.right { right: 8px; }
+
+        @keyframes blink {
+            0%, 45%, 55%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.1); }
+        }
+
+        .skull-nose {
+            width: 8px;
+            height: 8px;
+            background: #333;
+            position: absolute;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+        }
+
+        .skull-jaw {
+            width: 40px;
+            height: 16px;
+            background: #E8E8E8;
+            border: 4px solid #333;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .skull-teeth {
+            display: flex;
+            justify-content: center;
+            gap: 2px;
+            position: absolute;
+            top: 44px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .tooth {
+            width: 6px;
+            height: 8px;
+            background: #FFF;
+            border: 2px solid #333;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        .error-badge {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: #E53935;
+            border: 4px solid #B71C1C;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 4px 4px 0 #7F0000;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .error-badge::before,
+        .error-badge::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 36px;
+            background: #FFF;
+            border-radius: 4px;
+        }
+
+        .error-badge::before { transform: rotate(45deg); }
+        .error-badge::after { transform: rotate(-45deg); }
+
+        h1 {
+            color: #5D4037;
+            font-size: 18px;
+            margin-bottom: 16px;
+            text-shadow: 2px 2px 0 #D7CCC8;
+            line-height: 1.6;
+        }
+
+        .message {
+            color: #6D4C41;
+            font-size: 10px;
+            line-height: 2;
+            margin-bottom: 24px;
+        }
+
+        .error-code {
+            background: #FFEBEE;
+            border: 4px solid #EF9A9A;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            font-size: 8px;
+            color: #C62828;
+            word-break: break-all;
+        }
+
+        .pixel-btn {
+            background: linear-gradient(180deg, #FF7043 0%, #E64A19 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            box-shadow:
+                4px 4px 0 #BF360C,
+                inset 2px 2px 0 rgba(255,255,255,0.3);
+            transition: all 0.1s;
+            text-transform: uppercase;
+            margin: 0 8px;
+        }
+
+        .pixel-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow:
+                2px 2px 0 #BF360C,
+                inset 2px 2px 0 rgba(255,255,255,0.3);
+        }
+
+        .pixel-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow:
+                0 0 0 #BF360C,
+                inset 2px 2px 0 rgba(0,0,0,0.2);
+        }
+
+        .pixel-btn.secondary {
+            background: linear-gradient(180deg, #78909C 0%, #546E7A 100%);
+            box-shadow:
+                4px 4px 0 #37474F,
+                inset 2px 2px 0 rgba(255,255,255,0.3);
+        }
+
+        .pixel-btn.secondary:hover {
+            box-shadow:
+                2px 2px 0 #37474F,
+                inset 2px 2px 0 rgba(255,255,255,0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* Rain effect */
+        .rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .drop {
+            position: absolute;
+            width: 2px;
+            height: 16px;
+            background: linear-gradient(180deg, transparent, rgba(150, 180, 200, 0.6));
+            animation: rain 1s linear infinite;
+        }
+
+        .drop:nth-child(1) { left: 5%; animation-delay: 0s; animation-duration: 0.8s; }
+        .drop:nth-child(2) { left: 15%; animation-delay: 0.2s; animation-duration: 1s; }
+        .drop:nth-child(3) { left: 25%; animation-delay: 0.4s; animation-duration: 0.9s; }
+        .drop:nth-child(4) { left: 35%; animation-delay: 0.1s; animation-duration: 1.1s; }
+        .drop:nth-child(5) { left: 45%; animation-delay: 0.5s; animation-duration: 0.85s; }
+        .drop:nth-child(6) { left: 55%; animation-delay: 0.3s; animation-duration: 0.95s; }
+        .drop:nth-child(7) { left: 65%; animation-delay: 0.6s; animation-duration: 1.05s; }
+        .drop:nth-child(8) { left: 75%; animation-delay: 0.15s; animation-duration: 0.9s; }
+        .drop:nth-child(9) { left: 85%; animation-delay: 0.45s; animation-duration: 1s; }
+        .drop:nth-child(10) { left: 95%; animation-delay: 0.25s; animation-duration: 0.88s; }
+
+        @keyframes rain {
+            0% { transform: translateY(-20px); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0.3; }
+        }
+
+        /* Decorative corners */
+        .corner {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: #8B4513;
+        }
+
+        .corner-tl { top: -4px; left: -4px; }
+        .corner-tr { top: -4px; right: -4px; }
+        .corner-bl { bottom: -4px; left: -4px; }
+        .corner-br { bottom: -4px; right: -4px; }
+
+        /* Lightning flash */
+        .lightning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            animation: flash 8s ease-in-out infinite;
+        }
+
+        @keyframes flash {
+            0%, 89%, 91%, 93%, 100% { opacity: 0; }
+            90%, 92% { opacity: 0.1; }
+        }
+
+        .close-hint {
+            color: #8D6E63;
+            font-size: 10px;
+            line-height: 2;
+            margin-top: 16px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="lightning"></div>
+
+    <div class="rain">
+        <div class="drop"></div>
+        <div class="drop"></div>
+        <div class="drop"></div>
+        <div class="drop"></div>
+        <div class="drop"></div>
+        <div class="drop"></div>
+        <div class="drop"></div>
+        <div class="drop"></div>
+        <div class="drop"></div>
+        <div class="drop"></div>
+    </div>
+
+    <div class="container">
+        <div class="dialog-box">
+            <div class="corner corner-tl"></div>
+            <div class="corner corner-tr"></div>
+            <div class="corner corner-bl"></div>
+            <div class="corner corner-br"></div>
+
+            <div class="skull-container">
+                <div class="skull">
+                    <div class="skull-head">
+                        <div class="skull-eye left"></div>
+                        <div class="skull-eye right"></div>
+                        <div class="skull-nose"></div>
+                    </div>
+                    <div class="skull-teeth">
+                        <div class="tooth"></div>
+                        <div class="tooth"></div>
+                        <div class="tooth"></div>
+                        <div class="tooth"></div>
+                    </div>
+                    <div class="skull-jaw"></div>
+                </div>
+            </div>
+
+            <div class="error-badge"></div>
+
+            <h1>Authorization<br>Failed!</h1>
+
+            <p class="message">
+                Something went wrong<br>
+                during the authorization<br>
+                process.
+            </p>
+
+            <div class="error-code">
+                Error: Authorization code not received
+            </div>
+
+            <div class="btn-group">
+                <button class="pixel-btn" onclick="location.reload()">
+                    Try Again
+                </button>
+                <button class="pixel-btn secondary" id="closeBtn" onclick="tryClose()">
+                    Close
+                </button>
+            </div>
+            <p class="close-hint" id="closeHint" style="display:none;">
+                Press Cmd+W or Ctrl+W<br>to close this tab
+            </p>
+
+    <script>
+        function tryClose() {
+            window.close();
+            setTimeout(function() {
+                document.getElementById('closeBtn').style.display = 'none';
+                document.getElementById('closeHint').style.display = 'block';
+            }, 100);
+        }
+    </script>
+        </div>
+    </div>
+</body>
+</html>

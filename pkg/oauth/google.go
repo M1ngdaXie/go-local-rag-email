@@ -2,6 +2,7 @@ package oauth
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,6 +15,9 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/gmail/v1"
 )
+
+//go:embed templates/success.html templates/fail.html
+var templates embed.FS
 
 // GetClient returns an authenticated HTTP client for Gmail API
 func GetClient(credentialsPath, tokenPath string) (*http.Client, error) {
@@ -77,13 +81,16 @@ func GetTokenViaLoopback(config *oauth2.Config) (*oauth2.Token, error) {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		code := r.URL.Query().Get("code")
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		if code == "" {
-			w.Write([]byte("<h1>授权失败，未获取到 Code</h1>"))
+			failHTML, _ := templates.ReadFile("templates/fail.html")
+			w.Write(failHTML)
 			return
 		}
 		// 把 code 传回给主逻辑
 		codeChan <- code
-		w.Write([]byte("<h1>授权成功！</h1><p>您可以关闭此窗口并回到终端。</p>"))
+		successHTML, _ := templates.ReadFile("templates/success.html")
+		w.Write(successHTML)
 	})
 
 	go func() {
