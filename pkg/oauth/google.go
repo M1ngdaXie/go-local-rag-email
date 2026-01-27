@@ -29,7 +29,6 @@ func GetClient(credentialsPath, tokenPath string) (*http.Client, error) {
     }
 
     tok, err := tokenFromFile(tokenPath)
-	ts := config.TokenSource(ctx, tok)
     if err != nil {
         // 找不到文件，走全自动授权
         fmt.Println("🔑 No local token found. Opening browser for authorization...", err)
@@ -37,7 +36,7 @@ func GetClient(credentialsPath, tokenPath string) (*http.Client, error) {
         if err != nil {
             return nil, err
         }
-        err := saveToken(tokenPath, tok) 
+        err = saveToken(tokenPath, tok) 
 		if err != nil{
 			fmt.Print("Error saving token into files", err)
 		}
@@ -52,6 +51,7 @@ func GetClient(credentialsPath, tokenPath string) (*http.Client, error) {
             // 但如果 tok 里没有 RefreshToken，这里就该提示用户重新 Auth
         }
     }
+	ts := config.TokenSource(ctx, tok)
 	newToken, err := ts.Token()
 	if err != nil {
         return nil, fmt.Errorf("failed to get token from source: %w", err)
@@ -64,7 +64,7 @@ func GetClient(credentialsPath, tokenPath string) (*http.Client, error) {
     // 这个 client 是个“智能”客户端：
     // 1. 如果 AccessToken 没过期，直接用。
     // 2. 如果过期了但有 RefreshToken，它会偷偷换个新的并继续请求。
-    return config.Client(ctx, tok), nil
+    return config.Client(ctx, newToken), nil
 }
 // getTokenFromWeb starts OAuth flow in browser
 func GetTokenViaLoopback(config *oauth2.Config) (*oauth2.Token, error) {
@@ -120,26 +120,30 @@ func GetTokenViaLoopback(config *oauth2.Config) (*oauth2.Token, error) {
 // tokenFromFile reads token from JSON file
 func tokenFromFile(path string) (*oauth2.Token, error) {
 	f, err := os.Open(path)
-	fmt.Printf("Opening token files in path : %s", path)
-	if err != nil{
-		fmt.Print("Error Open Files")
-		return nil, err
+	if err != nil {
+		return nil, fmt.Errorf("open token file failed: %w", err)
 	}
-	tok := &oauth2.Token{}
-	json.NewDecoder(f).Decode(tok)
+	defer f.Close()
 
+	tok := &oauth2.Token{}
+	if err := json.NewDecoder(f).Decode(tok); err != nil {
+		return nil, fmt.Errorf("decode token failed: %w", err)
+	}
 	return tok, nil
 }
 
 // saveToken saves token to JSON file
 func saveToken(path string, token *oauth2.Token) error {
 	f, err := os.Create(path)
-	fmt.Printf("Writing token files in path : %s", path)
-	if err != nil{
-		fmt.Println("Error creating files for token")
+	if err != nil {
+		return fmt.Errorf("create token file failed: %w", err)
 	}
-	json.NewEncoder(f).Encode(token)
-	return err
+	defer f.Close()
+
+	if err := json.NewEncoder(f).Encode(token); err != nil {
+		return fmt.Errorf("encode token failed: %w", err)
+	}
+	return nil
 }
 
 func OpenBrowser(url string) error {

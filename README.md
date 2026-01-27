@@ -195,10 +195,10 @@ This is a portfolio project. Feel free to fork and experiment!
 ## Roadmap
 
 - [x] Project skeleton setup
-- [ ] Configuration management with Viper
-- [ ] Database layer (SQLite + Qdrant)
-- [ ] Gmail OAuth flow
-- [ ] Email sync service
+- [x] Configuration management with Viper
+- [x] Database layer (SQLite + Qdrant)
+- [x] Gmail OAuth flow
+- [x] Email sync service
 - [ ] OpenAI integration (embeddings + chat)
 - [ ] RAG pipeline (chunking + indexing)
 - [ ] Semantic search
