@@ -17,10 +17,9 @@ var testEmailCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
-		// TODO: Step 1 - Create the email repository
+
 		repo := email.NewSQLiteRepository(application.SQLiteDB(), application.Logger())
 
-		// TODO: Step 2 - Create a test email
 		testEmail := &domain.Email{
 			// ID 必须唯一，使用 UUID 生成
 			ID:       uuid.New().String(),
@@ -34,14 +33,12 @@ var testEmailCmd = &cobra.Command{
 			BodyText: "Hello! If you can see this, the persistence layer is working correctly.",
 		}
 
-		// TODO: Step 3 - Save the email to database
 				fmt.Println("Creating test email...")
 		      if err := repo.Create(ctx, testEmail); err != nil {
 		          return err
 		      }
 		      fmt.Printf("✓ Created email: %s\n", testEmail.ID)
 
-		// TODO: Step 4 - Retrieve the email by ID
 		fmt.Println("\nRetrieving email...")
 		      retrieved, err := repo.Get(ctx, testEmail.ID)
 		      if err != nil {
@@ -49,7 +46,6 @@ var testEmailCmd = &cobra.Command{
 		      }
 		      fmt.Printf("✓ Retrieved: %s - %s\n", retrieved.Subject, retrieved.From)
 
-		// TODO: Step 5 - List all emails
 		fmt.Println("\nListing all emails...")
 		      emails, err := repo.List(ctx, email.Filter{}, email.Pagination{Limit: 10})
 		      if err != nil {

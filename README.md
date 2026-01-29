@@ -199,9 +199,9 @@ This is a portfolio project. Feel free to fork and experiment!
 - [x] Database layer (SQLite + Qdrant)
 - [x] Gmail OAuth flow
 - [x] Email sync service
-- [ ] OpenAI integration (embeddings + chat)
-- [ ] RAG pipeline (chunking + indexing)
-- [ ] Semantic search
-- [ ] CLI commands
+- [x] OpenAI integration (embeddings + chat)
+- [x] RAG pipeline (chunking + indexing)
+- [x] Semantic search
+- [x] CLI commands
 - [ ] TUI interface
 - [ ] Tests

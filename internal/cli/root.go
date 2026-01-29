@@ -38,4 +38,8 @@ func init() {
 	rootCmd.AddCommand(authCmd)
 	rootCmd.AddCommand(syncCmd)
 	rootCmd.AddCommand(listCmd)
+	rootCmd.AddCommand(testLLMCmd)
+	rootCmd.AddCommand(testParserCmd)
+	rootCmd.AddCommand(testRAGCmd)
+	// search command registered via its own init() in search.go
 }

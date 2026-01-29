@@ -71,7 +71,6 @@ func (r *qdrantRepo) Search(ctx context.Context, vec []float32, opts SearchOptio
 		WithPayload:    pb.NewWithPayload(true),
 	}
 
-	// TODO: 如果 opts.Filter 不为空，这里需要构建 Filter (比较复杂，MVP 先跳过)
 
 	// 2. 执行搜索
 	resp, err := r.client.Query(ctx, queryPoints)
@@ -95,14 +94,24 @@ func (r *qdrantRepo) Search(ctx context.Context, vec []float32, opts SearchOptio
 					results[i].Payload["email_id"] = strVal
 				}
 			}
+			if val, ok := item.Payload["subject"]; ok {
+				if strVal := val.GetStringValue(); strVal != "" {
+					results[i].Payload["subject"] = strVal
+				}
+			}
+			if val, ok := item.Payload["from"]; ok {
+				if strVal := val.GetStringValue(); strVal != "" {
+					results[i].Payload["from"] = strVal
+				}
+			}
 			if val, ok := item.Payload["content"]; ok {
 				if strVal := val.GetStringValue(); strVal != "" {
 					results[i].Payload["content"] = strVal
 				}
 			}
-			if val, ok := item.Payload["chunk_id"]; ok {
+			if val, ok := item.Payload["date"]; ok {
 				if strVal := val.GetStringValue(); strVal != "" {
-					results[i].Payload["chunk_id"] = strVal
+					results[i].Payload["date"] = strVal
 				}
 			}
 		}

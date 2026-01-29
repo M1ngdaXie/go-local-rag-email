@@ -24,7 +24,6 @@ func NewSQLiteRepository(db *gorm.DB, log logger.Logger) Repository {
 
 // Create stores a new email
 func (r *sqliteRepo) Create(ctx context.Context, email *domain.Email) error {
-	// TODO: Use GORM to create the email
 	result := r.db.WithContext(ctx).Create(email)
 	if result.Error != nil{
 		return result.Error
@@ -82,7 +81,6 @@ func (r *sqliteRepo) buildFilter(ctx context.Context, filter Filter) *gorm.DB {
 }
 // Count returns the total number of emails matching the filter
 func (r *sqliteRepo) Count(ctx context.Context, filter Filter) (int64, error) {
-	// TODO: Count emails matching the filter
 	var count int64
 	      query := r.buildFilter(ctx, filter)
 	    //   Apply the same filters as List()
